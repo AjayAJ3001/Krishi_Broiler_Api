@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed Order Request</title>
+    <style>
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 12px; color: #333; line-height: 1.4; }
+        .header-section { margin-bottom: 20px; border-bottom: 2px solid #444; padding-bottom: 10px; }
+        .company-name { font-size: 18px; font-weight: bold; text-align: center; display: block; }
+        
+        .header-grid { display: table; width: 100%; margin-top: 15px; }
+        .header-row { display: table-row; }
+        .header-cell { display: table-cell; padding: 4px 0; }
+        .label { font-weight: bold; color: #555; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background-color: #f2f2f2; font-weight: bold; border: 1px solid #ccc; padding: 8px; text-align: left; }
+        td { border: 1px solid #ccc; padding: 8px; vertical-align: top; }
+        
+        .text-right { text-align: right; }
+        .sub-text { font-size: 10px; color: #666; display: block; margin-top: 2px; }
+        
+        .footer-row { background-color: #eee; font-weight: bold; }
+        .total-label { text-align: right; padding-right: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="header-section">
+        <span class="company-name">FEED ORDER REQUEST</span>
+        
+        <div class="header-grid">
+            <div class="header-row">
+                <div class="header-cell">
+                    <span class="label">Doc No:</span> <%= doc_no %>
+                </div>
+                <div class="header-cell text-right">
+                    <span class="label">Date:</span> <%= new Date().toLocaleDateString('en-IN') %>
+                </div>
+            </div>
+            <div class="header-row">
+                <div class="header-cell">
+                    <span class="label">Vehicle No:</span> <%= vehicle_no %>
+                </div>
+                <div class="header-cell text-right">
+                    <span class="label">Mobile:</span> <%= mobile %>
+                </div>
+            </div>
+            <div class="header-row">
+                <div class="header-cell">
+                    <span class="label">Freight:</span> <%= freight %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="label">Feed Order Request Items:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">SNo</th>
+                <th style="width: 30%;">Farmer</th>
+                <th style="width: 35%;">Material</th>
+                <th style="width: 15%;" class="text-right">Qty (Bags)</th>
+                <th style="width: 15%;" class="text-right">MT</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (requests && requests.length > 0) { %>
+                <% requests.forEach((item, index) => { %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td>
+                            <strong><%= item.farmer %></strong>
+                            <span class="sub-text"><%= item.farmerName %></span>
+                        </td>
+                        <td>
+                            <strong><%= item.material %></strong>
+                            <span class="sub-text"><%= item.materialLabel %></span>
+                        </td>
+                        <td class="text-right">
+                            <%= item.quantity %>
+                        </td>
+                        <td class="text-right">
+                            <%# Calculation: Qty * 50 * 0.001 %>
+                            <%= (Number(item.quantity || 0) * 50 * 0.001).toFixed(3) %>
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="5" style="text-align: center;">No items found</td>
+                </tr>
+            <% } %>
+        </tbody>
+        <tfoot>
+            <tr class="footer-row">
+                <td colspan="3" class="total-label">Total :</td>
+                <td class="text-right">
+                    <%= requests.reduce((sum, item) => sum + Number(item.quantity || 0), 0) %>
+                </td>
+                <td class="text-right">
+                    <%= requests.reduce((sum, item) => sum + (Number(item.quantity || 0) * 50 * 0.001), 0).toFixed(3) %>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+</body>
+</html>
